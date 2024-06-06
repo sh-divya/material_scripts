@@ -1,0 +1,8 @@
+data_file: "sorted_gfn_samples.csv"
+nsamples: 10
+ngen: 10
+random: True
+rel_ter: 100
+mlff: "m3gnet"
+target: "Eform"
+verbose: False
