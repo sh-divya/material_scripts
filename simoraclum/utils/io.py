@@ -30,12 +30,12 @@ def sample_candidates(data, num, random):
 def struct_generator(state, ng):
     gen = pyxtal()
     comp, sg, lattice = parse_state(state)
-    elems, count = zip(*[(k, v) for k, v in comp.items()])
+    elems, stoich = zip(*[(k, v) for k, v in comp.items()])
     count = 0
     structs = []
     while count < ng:
         try:
-            gen.from_random(3, sg, elems, count, lattice)
+            gen.from_random(3, sg, elems, stoich, lattice=lattice)
         except RuntimeError:
             continue
         except pyx.msg.Comp_CompatibilityError:
@@ -43,3 +43,14 @@ def struct_generator(state, ng):
         count += 1
         structs.append(gen.to_pymatgen())
     return structs
+
+
+def save_results(config, data, pred_str, pred_targ):
+    fptr = config.data_file.split(".")[0]
+    v = "_verbose" if config.verbose else ""
+    fptr = f"{fptr}_ngen{config.ngen}_steps{config.rel_iter}_{config.mlff}{v}.csv"
+    if config.verbose:
+        pass
+    else:
+        data["model_struct0"] = pred_str
+        data["model_target0"] = pred_targ

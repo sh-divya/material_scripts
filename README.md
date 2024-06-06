@@ -1,5 +1,7 @@
 ## Introduction
 
+Repository to use either ML or QM based crystal relaxation oracles. Currently implements generating random initializations of a crystal state (composition, space group and lattice parameters) and relaxing them using M3gnet so as to choose structures that closely match the target (eother formation energy or bandgap) as predicted by the [DAVE](https://github.com/sh-divya/ActiveLearningMaterials) proxy.
+
 ## Example Setup Solution
 
 1. Conda environment with `python==3.10`
@@ -16,6 +18,6 @@
 12. `python -m importlib-metadata==1.4`
 13. `python -m pip install --no-dependencies pyxtal`
 14. `python -m pip install smact`
-`python -m pip install mendeleev`
+15. `python -m pip install mendeleev`
 
 
