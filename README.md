@@ -1,6 +1,6 @@
 ## Introduction
 
-Repository to use either ML or QM based crystal relaxation oracles. Currently implements generating random initializations of a crystal state (composition, space group and lattice parameters) and relaxing them using M3gnet so as to choose structures that closely match the target (eother formation energy or bandgap) as predicted by the [DAVE](https://github.com/sh-divya/ActiveLearningMaterials) proxy.
+Repository to use either ML or QM based crystal relaxation oracles. Currently implements generating random initializations of a crystal state (composition, space group and lattice parameters) and relaxing them using M3gnet so as to choose structures that closely match the target (either formation energy or bandgap) as predicted by the [DAVE](https://github.com/sh-divya/ActiveLearningMaterials) proxy.
 
 ## Example Setup Solution
 

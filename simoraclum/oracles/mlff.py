@@ -6,7 +6,7 @@ class MLOracle(object):
         self.model_name = model
         self.target = target
         if self.model_name == "m3gnet":
-            matgl.clear_cache()
+            matgl.clear_cache(confirm=False)
             if self.target == "Eform":
                 self.model = matgl.load_model("M3GNet-MP-2018.6.1-Eform")
             elif self.target == "BG":

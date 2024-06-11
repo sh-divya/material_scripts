@@ -49,8 +49,14 @@ def save_results(config, data, pred_str, pred_targ):
     fptr = config.data_file.split(".")[0]
     v = "_verbose" if config.verbose else ""
     fptr = f"{fptr}_ngen{config.ngen}_steps{config.rel_iter}_{config.mlff}{v}.csv"
-    if config.verbose:
-        pass
-    else:
-        data["model_struct0"] = pred_str
-        data["model_target0"] = pred_targ
+    fpath = ROOT_PATH / "results"
+    fpath.mkdir(parents=True, exist_ok=True)
+    pred_str = zip(*(pred_str))
+    pred_targ = zip(*(pred_targ))
+    for i, (s, t) in enumerate(zip(pred_str, pred_targ)):
+        targ_col = f"{config.target}_rel{i}"
+        str_col = f"Struct_rel{i}"
+        data[str_col] = s
+        data[targ_col] = t
+    data.to_csv(fpath / fptr)
+    return data
