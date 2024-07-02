@@ -1,0 +1,8 @@
+data_file: "train_data.csv"
+nsamples: 5
+ngen: 3
+random: True
+rel_iter: 100
+mlff: "m3gnet"
+target: "Eform"
+verbose: True

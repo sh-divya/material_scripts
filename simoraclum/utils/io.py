@@ -13,7 +13,7 @@ DATA_PATH = ROOT_PATH / "data"
 def parse_state(state):
     comp = Composition(state["Composition"]).get_el_amt_dict()
     sg = int(state["SG"])
-    lattice = [float(i.strip(" ").strip("()")) for i in state["lattice"].split(",")]
+    lattice = [state[l] for l in ["a", "b", "c", "alpha", "beta", "gamma"]]
     lattice = Lattice.from_para(*lattice[:3], *lattice[3:])
     return comp, sg, lattice
 
@@ -66,6 +66,10 @@ def struct_generator(state, ng):
             continue
         except pyx.msg.Comp_CompatibilityError:
             print("Composition Compatibility")
+            pass
+        except Exception as e:
+            print(e)
+            print("Unknown Error")
             pass
         count += 1
         structs.append(sample)

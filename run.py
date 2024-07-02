@@ -49,7 +49,7 @@ def relax(cfg: DictConfig):
         pyx_str = struct_generator(sample, cfg.ngen)
         pyx_str = get_relaxed_structures(oracle, pyx_str, verbosity=cfg.verbose)
         delta_target, pred_target = get_delta_target(
-            oracle, pyx_str, sample["energies"]
+            oracle, pyx_str, sample[cfg.target]
         )
         pyx_str = [s.to(fmt="cif") if s is not None else "" for s in pyx_str]
         if not cfg.verbose:
