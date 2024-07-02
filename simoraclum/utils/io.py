@@ -58,7 +58,7 @@ def struct_generator(state, ng):
             print("Successful sampling")
         except (RuntimeError, TimeoutError) as e:
             tries += 1
-            if tries > 20:
+            if tries > 5:
                 print("Stopping pyxtal tries because of timeout")
                 pass
             else:
