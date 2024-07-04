@@ -1,7 +1,7 @@
 data_file: "train_data.csv"
-nsamples: 5
-ngen: 3
-random: True
+nsamples: 10
+ngen: 20
+random: False
 rel_iter: 100
 mlff: "m3gnet"
 target: "Eform"

@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 
 def target_parity(config, data):
     target_df = pd.DataFrame()
-    target_df[config.target] = data["energies"]
+    target_df[config.target] = data[config.target]
     for col in list(data.columns):
         try:
             if col.split("_")[0] == config.target:

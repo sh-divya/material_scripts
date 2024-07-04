@@ -62,10 +62,11 @@ def relax(cfg: DictConfig):
         print(f"Saved sample #{i}")
     # import pandas as pd
 
-    # fptr = str(Path("./results/filter_gfn_samples5_ngen3_steps100_m3gnet_verbose.csv"))
+    # fptr = str(Path("./results/train_data10_ngen10_steps500_m3gnet_verbose.csv"))
     # samples = pd.read_csv(fptr, index_col=0)
     # print(samples)
     # res = target_parity(cfg, samples)
+    # print(res)
     # plot_candidates(cfg.target, res, fptr.split(".")[0] + ".png")
 
 
