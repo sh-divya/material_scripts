@@ -28,6 +28,7 @@ if __name__ == "__main__":
     parser.add_argument("--csv_file")
     parser.add_argument("--smact_filter", action="store_true")
     parser.add_argument("--target", default="Eform")
+    parser.add_argument("--num", type=int, default=None)
     args = parser.parse_args()
     csv_path = DATA_PATH / args.csv_file
     smact_flag = args.smact_filter
@@ -41,10 +42,18 @@ if __name__ == "__main__":
 
     data[["a", "b", "c", "alpha", "beta", "gamma"]] = data.apply(expand_lattice, axis=1, result_type="expand")
     data = data.drop(columns=["readable", "Stage", "lattice", "energies"])
-    data.to_csv(DATA_PATH / f"sorted_{args.csv_file}")
+    if args.num is not None:
+        out = data.iloc[:args.num]
+        out.to_csv(DATA_PATH / f"sorted_{args.csv_file}")
+    else:
+        data.to_csv(DATA_PATH / f"sorted_{args.csv_file}")
     if smact_flag:
         data["comp"] = data["Composition"].map(Composition)
         data["SMACT"] = data["comp"].map(smact_filter)
         data = data[data["SMACT"]]
         data = data.drop(columns=["comp", "SMACT"])
-        data.to_csv(DATA_PATH / f"filter_{args.csv_file}")
+        if args.num is not None:
+            out = data.iloc[:args.num]
+            out.to_csv(DATA_PATH / f"filter_{args.csv_file}")
+        else:
+            data.to_csv(DATA_PATH / f"filter_{args.csv_file}")

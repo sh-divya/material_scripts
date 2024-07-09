@@ -1,4 +1,4 @@
-from simoraclum.utils.io import sample_candidates, struct_generator, save_results
+from simoraclum.utils.io import sample_candidates, struct_generator, save_results, get_saved_results
 from simoraclum.utils.post import target_parity, plot_candidates
 from simoraclum.oracles.mlff import MLOracle
 
@@ -39,34 +39,38 @@ def get_delta_target(oracle, structs, true_val):
 
 @hydra.main(version_base=None, config_path=str(CONFIG_PATH), config_name="mlff")
 def relax(cfg: DictConfig):
-    data_file, num, rnd = (cfg.data_file, cfg.nsamples, cfg.random)
+    data_file, num, rnd, start_idx = (cfg.data_file, cfg.nsamples, cfg.random, cfg.start)
+    ngen, verbose, target = (cfg.ngen, cfg.verbose, cfg.target)
     samples = sample_candidates(data_file, num, rnd)
+    fptr = data_file.split(".")[0]
+    v = "_verbose" if verbose else ""
+    # num=100
+    # ngen=20
+    fptr = f"{fptr}{num}_ngen{ngen}_steps{cfg.rel_iter}_{cfg.mlff}{v}.csv"
+    # fptr = "incomplete_gfn_samples100_ngen20_steps100_m3gnet_verbose.csv"
+    rel_structs, rel_targets = get_saved_results(fptr, ngen, num)
     oracle = MLOracle(cfg.mlff, cfg.target, cfg.rel_iter)
-    rel_structs = [[f"{i}{j}_str" for j in range(cfg.ngen)] for i in range(num)]
-    rel_targets = [[f"{j}{i}_targ" for j in range(cfg.ngen)] for i in range(num)]
     for i, sample in tqdm(enumerate(samples.iterrows())):
+        if i < start_idx:
+            continue
         s, sample = sample
-        pyx_str = struct_generator(sample, cfg.ngen)
-        pyx_str = get_relaxed_structures(oracle, pyx_str, verbosity=cfg.verbose)
+        pyx_str = struct_generator(sample, ngen)
+        pyx_str = get_relaxed_structures(oracle, pyx_str, verbosity=verbose)
         delta_target, pred_target = get_delta_target(
-            oracle, pyx_str, sample[cfg.target]
+            oracle, pyx_str, sample[target]
         )
         pyx_str = [s.to(fmt="cif") if s is not None else "" for s in pyx_str]
-        if not cfg.verbose:
+        if not verbose:
             d, delta_target = min(delta_target, key=lambda x: x[1])
             pyx_str = [pyx_str[d]]
             pred_target = [pred_target[d]]
-        rel_structs[i] = pyx_str
-        rel_targets[i] = pred_target
-        samples, fptr = save_results(cfg, samples, rel_structs, rel_targets)
-        print(f"Saved sample #{i}")
+        rel_structs[start_idx + i] = pyx_str
+        rel_targets[start_idx + i] = pred_target
+        samples = save_results(cfg, samples, rel_structs, rel_targets, fptr)
+        print(f"Saved sample #{start_idx + i}")
     # import pandas as pd
-
-    # fptr = str(Path("./results/train_data10_ngen10_steps500_m3gnet_verbose.csv"))
-    # samples = pd.read_csv(fptr, index_col=0)
-    # print(samples)
     # res = target_parity(cfg, samples)
-    # print(res)
+    # res = res.apply(lambda x: pd.to_numeric(x, errors='coerce')).dropna()
     # plot_candidates(cfg.target, res, fptr.split(".")[0] + ".png")
 
 

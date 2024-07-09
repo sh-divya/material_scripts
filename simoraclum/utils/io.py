@@ -21,7 +21,7 @@ def parse_state(state):
 def sample_candidates(data, num, random):
     data = pd.read_csv(DATA_PATH / data, index_col=0)
     if random:
-        data = data.iloc[: num * 10]
+        data = data.iloc[:num * 10]
         data = data.sample(n=num, axis=0)
     else:
         data = data.iloc[:num]
@@ -76,10 +76,7 @@ def struct_generator(state, ng):
     return structs
 
 
-def save_results(config, data, pred_str, pred_targ):
-    fptr = config.data_file.split(".")[0]
-    v = "_verbose" if config.verbose else ""
-    fptr = f"{fptr}{config.nsamples}_ngen{config.ngen}_steps{config.rel_iter}_{config.mlff}{v}.csv"
+def save_results(config, data, pred_str, pred_targ, fptr):
     fpath = ROOT_PATH / "results"
     fpath.mkdir(parents=True, exist_ok=True)
     pred_str = zip(*(pred_str))
@@ -90,4 +87,18 @@ def save_results(config, data, pred_str, pred_targ):
         data[str_col] = s
         data[targ_col] = t
     data.to_csv(fpath / fptr)
-    return data, str(fpath / fptr)
+    return data
+
+def get_saved_results(fptr, ngen, num):
+    res_path = ROOT_PATH / "results" / fptr
+    if res_path.is_file():
+        samples = pd.read_csv(res_path, index_col=0)
+        all_cols = samples.columns[9:]
+        struct_cols = all_cols[0::2]
+        targ_cols = all_cols[1::2]
+        rel_structs = samples[struct_cols]
+        rel_targets = samples[targ_cols]
+    else:
+        rel_structs = [[f"{i}{j}_str" for j in range(ngen)] for i in range(num)]
+        rel_targets = [[f"{j}{i}_targ" for j in range(ngen)] for i in range(num)]
+    return rel_structs, rel_targets

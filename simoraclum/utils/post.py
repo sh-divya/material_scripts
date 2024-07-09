@@ -37,6 +37,6 @@ def plot_candidates(target, df, name="tmp"):
         ax.scatter(x, ym)
         ax.errorbar(x, ym, yerr=ys, fmt="none")
     fig.supxlabel(f"True {target}")
-    fig.supylabel("Relaxed Target predicted with chosen oracle")
+    fig.supylabel(f"Relaxed {target} predicted with chosen oracle")
     fig.tight_layout()
     fig.savefig(name)
