@@ -11,6 +11,7 @@ DATA_PATH = ROOT_PATH / "data"
 
 
 def parse_state(state):
+    print("Parsing")
     comp = Composition(state["Composition"]).get_el_amt_dict()
     sg = int(state["SG"])
     lattice = [state[l] for l in ["a", "b", "c", "alpha", "beta", "gamma"]]
@@ -21,7 +22,7 @@ def parse_state(state):
 def sample_candidates(data, num, random):
     data = pd.read_csv(DATA_PATH / data, index_col=0)
     if random:
-        data = data.iloc[:num * 10]
+        data = data.iloc[: num * 10]
         data = data.sample(n=num, axis=0)
     else:
         data = data.iloc[:num]
@@ -50,23 +51,25 @@ def struct_generator(state, ng):
     elems, stoich = zip(*[(k, v) for k, v in comp.items()])
     count = 0
     structs = []
+    print("Starting Gen")
     while count < ng:
         sample = None
-        tries = 0
         try:
             sample = sample_pyx(sg, elems, stoich, lattice)
             print("Successful sampling")
         except (RuntimeError, TimeoutError) as e:
-            tries += 1
-            if tries > 5:
+            count += 1
+            structs.append(sample)
+            if count > ng:
                 print("Stopping pyxtal tries because of timeout")
-                pass
+                break
             else:
                 print("Issue with Pyxtal, retrying ....")
-            continue
+                continue
         except pyx.msg.Comp_CompatibilityError:
             print("Composition Compatibility")
-            pass
+            structs.extend([sample] * ng)
+            break
         except Exception as e:
             print(e)
             print("Unknown Error")
@@ -89,6 +92,7 @@ def save_results(config, data, pred_str, pred_targ, fptr):
     data.to_csv(fpath / fptr)
     return data
 
+
 def get_saved_results(fptr, ngen, num):
     res_path = ROOT_PATH / "results" / fptr
     if res_path.is_file():
@@ -96,8 +100,8 @@ def get_saved_results(fptr, ngen, num):
         all_cols = samples.columns[9:]
         struct_cols = all_cols[0::2]
         targ_cols = all_cols[1::2]
-        rel_structs = samples[struct_cols]
-        rel_targets = samples[targ_cols]
+        rel_structs = samples[struct_cols].values.astype(str)
+        rel_targets = samples[targ_cols].values
     else:
         rel_structs = [[f"{i}{j}_str" for j in range(ngen)] for i in range(num)]
         rel_targets = [[f"{j}{i}_targ" for j in range(ngen)] for i in range(num)]

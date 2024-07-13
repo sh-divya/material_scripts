@@ -15,7 +15,8 @@ class MLOracle(object):
 
     def relax(self, struct, verbose):
         if self.model_name == "m3gnet":
-            return struct.relax(verbose=verbose, steps=self.niter)
+            # return struct.relax(verbose=verbose, steps=self.niter)
+            return struct.relax(verbose=True, steps=self.niter)
 
     def predict(self, struct):
         return self.model.predict_structure(struct)
