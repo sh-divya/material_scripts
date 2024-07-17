@@ -57,6 +57,7 @@ def relax(cfg: DictConfig):
     fptr = data_file.split(".")[0]
     v = "_verbose" if verbose else ""
     fptr = f"{fptr}{num}_ngen{ngen}_steps{cfg.rel_iter}_{cfg.mlff}{v}.csv"
+    # fptr = f"filter_gfn_samples10_ngen5_steps250_m3gnet_verbose.csv"
     rel_structs, rel_targets = get_saved_results(fptr, ngen, num)
     oracle = MLOracle(cfg.mlff, cfg.target, cfg.rel_iter)
     for i, sample in tqdm(enumerate(samples.iterrows())):

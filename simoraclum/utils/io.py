@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from pathlib import Path
 import pyxtal as pyx
@@ -82,8 +83,8 @@ def struct_generator(state, ng):
 def save_results(config, data, pred_str, pred_targ, fptr):
     fpath = ROOT_PATH / "results"
     fpath.mkdir(parents=True, exist_ok=True)
-    pred_str = zip(*(pred_str))
-    pred_targ = zip(*(pred_targ))
+    pred_str = pred_str.T
+    pred_targ = pred_targ.T
     for i, (s, t) in enumerate(zip(pred_str, pred_targ)):
         targ_col = f"{config.target}_rel{i}"
         str_col = f"Struct_rel{i}"
@@ -103,6 +104,10 @@ def get_saved_results(fptr, ngen, num):
         rel_structs = samples[struct_cols].values.astype(str)
         rel_targets = samples[targ_cols].values
     else:
-        rel_structs = [[f"{i}{j}_str" for j in range(ngen)] for i in range(num)]
-        rel_targets = [[f"{j}{i}_targ" for j in range(ngen)] for i in range(num)]
+        rel_structs = np.array(
+            [[f"{i}{j}_str" for j in range(ngen)] for i in range(num)]
+        )
+        rel_targets = np.array(
+            [[f"{j}{i}_targ" for j in range(ngen)] for i in range(num)]
+        )
     return rel_structs, rel_targets
