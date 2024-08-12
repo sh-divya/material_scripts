@@ -1,8 +1,8 @@
-data_file: "filter_gfn_samples.csv"
-nsamples: 20
+data_file: "sorted_gfn_samples.csv"
+nsamples: 100
 ngen: 10
 random: False
-rel_iter: 100
+rel_iter: 250
 mlff: "m3gnet"
 target: "Eform"
 verbose: True
