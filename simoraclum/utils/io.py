@@ -53,15 +53,6 @@ def sample_pyx(sg, elems, stoich, lattice):
     return struct
 
 
-# import random
-# import time
-# @timeout(5)
-# def sample_pyx(sg, elems, stoich, lattice):
-#     n = random.randint(1, 10)
-#     time.sleep(n)
-#     return None
-
-
 def struct_generator(state, ng, wyckoff_map):
     comp, sg, lattice, wyck = parse_state(state)
     wyck = parse_wykoff(wyck, wyckoff_map)
@@ -72,7 +63,7 @@ def struct_generator(state, ng, wyckoff_map):
     print("Starting Gen")
     while count < ng:
         sample = None
-        deltaT = None
+        deltaT = 180
         try:
             sample, deltaT = sample_pyx(sg, elems, stoich, lattice)
             print("Successful sampling")
@@ -127,19 +118,22 @@ def get_saved_results(fptr, target, ngen, num):
         targ_cols = []
         time_cols = []
         for col in all_cols:
-            pre, num = str(col).split("_")
-            if pre == "Struct":
-                struct_cols.append(str(col))
-            elif pre == target:
-                targ_cols.append(str(col))
-            elif pre == "time":
-                time_cols.append(str(col))
-        rel_structs = samples[struct_cols].values.astype(str)
+            try:
+                pre, num = str(col).split("_")
+                if pre == "Struct":
+                    struct_cols.append(str(col))
+                elif pre == target:
+                    targ_cols.append(str(col))
+                elif pre == "time":
+                    time_cols.append(str(col))
+            except ValueError:
+                continue
+        rel_structs = samples[struct_cols].values.astype("object")
         rel_targets = samples[targ_cols].values
         gen_times = samples[time_cols].values
     else:
         rel_structs = np.array(
-            [[f"{i}{j}_str" for j in range(ngen)] for i in range(num)]
+            [[f"{i}{j}_str" for j in range(ngen)] for i in range(num)], dtype="object"
         )
         rel_targets = np.array(
             [[f"{j}{i}_targ" for j in range(ngen)] for i in range(num)]

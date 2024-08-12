@@ -14,6 +14,7 @@ from pathlib import Path
 from tqdm import tqdm
 import pandas as pd
 from yaml import safe_load
+import numpy as np
 
 BASE_PATH = Path(__file__).parent
 CONFIG_PATH = BASE_PATH / "config"
@@ -79,12 +80,12 @@ def relax(cfg: DictConfig):
             d, delta_target = min(delta_target, key=lambda x: x[1])
             pyx_str = [pyx_str[d]]
             pred_target = [pred_target[d]]
-        rel_structs[i] = pyx_str
+        rel_structs[i, :] = pyx_str
         rel_targets[i] = pred_target
         pyx_times[i] = times
         save_results(cfg, samples, rel_structs, rel_targets, times, fptr)
         print(f"Saved sample #{start_idx + i}")
-    samples = save_results(cfg, samples, rel_structs, rel_targets, fptr)
+    samples = save_results(cfg, samples, rel_structs, rel_targets, pyx_times, fptr)
     # import pandas as pd
     # res = target_parity(cfg, samples)
     # res = res.apply(lambda x: pd.to_numeric(x, errors='coerce')).dropna()

@@ -15,7 +15,7 @@ def timeout(seconds=10, error_message=os.strerror(errno.ETIME)):
         def wrapper(*args, **kwargs):
             signal.signal(signal.SIGALRM, _handle_timeout)
             signal.alarm(seconds)
-            delta = 0
+            delta = seconds
             try:
                 t1 = time.time()
                 results = func(*args, **kwargs)
@@ -24,7 +24,6 @@ def timeout(seconds=10, error_message=os.strerror(errno.ETIME)):
             except KeyError:
                 pass
             finally:
-                delta = seconds
                 signal.alarm(0)
 
             return results, delta
