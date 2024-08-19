@@ -29,6 +29,7 @@ def parse_state(state):
     lattice = Lattice.from_para(*lattice[:3], *lattice[3:])
     return comp, sg, lattice, wyck
 
+
 def parse_wykoff(wyck, wyck_map):
     if wyck:
         pass
@@ -97,6 +98,7 @@ def save_results(config, data, pred_str, pred_targ, times, fptr):
     fpath.mkdir(parents=True, exist_ok=True)
     pred_str = pred_str.T
     pred_targ = pred_targ.T
+    times = times.T
     for i, (s, t, delta) in enumerate(zip(pred_str, pred_targ, times)):
         targ_col = f"{config.target}_rel{i}"
         str_col = f"Struct_rel{i}"
@@ -138,5 +140,7 @@ def get_saved_results(fptr, target, ngen, num):
         rel_targets = np.array(
             [[f"{j}{i}_targ" for j in range(ngen)] for i in range(num)]
         )
-        gen_times = np.array([[0 for j in range(ngen)] for i in range(num)])
+        gen_times = np.array(
+            [[0 for j in range(ngen)] for i in range(num)], dtype="object"
+        )
     return rel_structs, rel_targets, gen_times
