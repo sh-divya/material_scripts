@@ -1,12 +1,11 @@
 data_file: "train_data.csv"
-nsamples: 20
+nsamples: 100
 ngen: 5
 random: False
-rel_iter: 250
+rel_iter: 500
 mlff: "m3gnet"
 target: "Eform"
 verbose: True
-wyckoff: False
 start: 0
-# wyckoff: /home/minion/Documents/proxies/crystallograpy/crystallograpy/yaml/wyckoff.yaml
+wyckoff: /scratch16/pclancy3/divya/MaterialOracles/wyckoff.yaml
 timer: True

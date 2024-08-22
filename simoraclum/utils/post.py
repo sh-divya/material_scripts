@@ -63,7 +63,11 @@ def single_rmsd(str1, str2):
         angle_tol=15,
         comparator=ElementComparator(),
     )
-    d, maxd = matcher.get_rms_dist(str1, str2)
+    try:
+        d, maxd = matcher.get_rms_dist(str1, str2)
+    except TypeError:
+        d = None
+        maxd = None
     return d, maxd
 
 
@@ -103,4 +107,5 @@ def plot_candidates(target, df, name="tmp"):
     fig.supxlabel(f"True {target}")
     fig.supylabel(f"Relaxed {target} predicted with chosen oracle")
     fig.tight_layout()
+    fig.savefig(str(name))
     return fig

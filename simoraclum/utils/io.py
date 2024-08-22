@@ -31,9 +31,13 @@ def parse_state(state):
 
 
 def parse_wykoff(wyck, wyck_map):
-    if wyck:
-        pass
-    return wyck
+    sites = {e[0]: [] for e in wyck}
+    if wyck and wyck_map:
+        for elem, wp in wyck:
+            sites[elem].append(wyck_map[wp]["name"])
+    else:
+        sites = None
+    return sites
 
 
 def sample_candidates(data, num, random):
@@ -47,9 +51,9 @@ def sample_candidates(data, num, random):
 
 
 @timeout(180)
-def sample_pyx(sg, elems, stoich, lattice):
+def sample_pyx(sg, elems, stoich, lattice, sites=None):
     gen = pyxtal()
-    gen.from_random(3, sg, elems, stoich, lattice=lattice)
+    gen.from_random(3, sg, elems, stoich, lattice=lattice, sites=None)
     struct = gen.to_pymatgen()
     return struct
 
@@ -58,6 +62,8 @@ def struct_generator(state, ng, wyckoff_map):
     comp, sg, lattice, wyck = parse_state(state)
     wyck = parse_wykoff(wyck, wyckoff_map)
     elems, stoich = zip(*[(k, v) for k, v in comp.items()])
+    if wyck:
+        wyck = [wyck[e] for e in elems]
     count = 0
     structs = []
     times = []
@@ -66,7 +72,7 @@ def struct_generator(state, ng, wyckoff_map):
         sample = None
         deltaT = 180
         try:
-            sample, deltaT = sample_pyx(sg, elems, stoich, lattice)
+            sample, deltaT = sample_pyx(sg, elems, stoich, lattice, sites=wyck)
             print("Successful sampling")
         except (RuntimeError, TimeoutError) as e:
             count += 1

@@ -65,7 +65,11 @@ if __name__ == "__main__":
         data = data[data["SMACT"]]
         data = data.drop(columns=["comp", "SMACT"])
         if args.num is not None:
-            out = data.iloc[: args.num]
+            if args.random:
+                out = data.iloc[: args.num * 10]
+                out = out.sample(n=args.num, axis=0)
+            else:
+                out = data.iloc[: args.num]
             out.to_csv(DATA_PATH / f"filter_{args.csv_file}")
         else:
             data.to_csv(DATA_PATH / f"filter_{args.csv_file}")

@@ -86,10 +86,6 @@ def relax(cfg: DictConfig):
         save_results(cfg, samples, rel_structs, rel_targets, pyx_times, fptr)
         print(f"Saved sample #{start_idx + i}")
     samples = save_results(cfg, samples, rel_structs, rel_targets, pyx_times, fptr)
-    # import pandas as pd
-    # res = target_parity(cfg, samples)
-    # res = res.apply(lambda x: pd.to_numeric(x, errors='coerce')).dropna()
-    # plot_candidates(cfg.target, res, fptr.split(".")[0] + ".png")
 
 
 if __name__ == "__main__":

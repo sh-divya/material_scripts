@@ -52,18 +52,21 @@ if __name__ == "__main__":
                     samples = fname[2][7:]
                     ngen = int(fname[3][4:])
                     iter_steps = int(fname[4][5:])
-                data = data.iloc[:5, :]
+                # data = data.iloc[:5, :]
+                # pd.set_option('display.max_rows', None)
                 res = target_parity(target, data)
-                err = target_delta(res)
-                struct_df = parse_structs(data, err["iBest"])
-                err = err.drop(columns=["iBest"], axis=1)
-                res = res.apply(lambda x: pd.to_numeric(x, errors="coerce")).dropna()
-                err[["RMSD", "maxD"]] = struct_rmsd(struct_df)
+                res = res.apply(lambda x: pd.to_numeric(x, errors="coerce"))
+                # err = target_delta(res)
+                # err = err.dropna()
+                # struct_df = parse_structs(data, err["iBest"])
+                # err = err.drop(columns=["iBest"], axis=1)
+                # err[["RMSD", "maxD"]] = struct_rmsd(struct_df)
                 fig = plot_candidates(
                     target, res, PLOTS_PATH / ("_".join(fname) + ".png")
                 )
-                fig, ax = plt.subplots()
-                err.hist(ax=ax)
-                fig.savefig(PLOTS_PATH / ("_".join(fname) + "_performance.png"))
-                print(err.describe())
-                raise Exception
+                # fig, ax = plt.subplots()
+                # err.hist(ax=ax)
+                # fig.savefig(PLOTS_PATH / ("_".join(fname) + "_performance.png"))
+                # print(err.describe())
+                # print("RMSD nans", samples - err["RMSD"].shape[0])
+                # print("maxD nans", samples - err["maxD"].shape[0])
