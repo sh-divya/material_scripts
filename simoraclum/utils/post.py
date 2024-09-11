@@ -40,14 +40,21 @@ def parse_structs(samples, minidx):
     return struct_df
 
 
-def target_delta(res):
+def target_delta(res, strat="min"):
     true = res.iloc[:, 0]
     pred = res.iloc[:, 1:]
+    if strat == "min":
+        choice = pred.min(axis='columns')
+        ichoice = pred.idxmin(axis=1)
+    elif strat == "med":
+        choice = pred.median(axis=1)
     delta = abs(pred.sub(true, axis=0))
     df = pd.DataFrame()
     df["Best"] = delta.min(axis=1)
     df["Mean"] = delta.mean(axis=1)
+    df["Choice"] = abs(choice.sub(true))
     df["iBest"] = delta.idxmin(axis=1)
+    df["iChoice"] = ichoice
     return df
 
 

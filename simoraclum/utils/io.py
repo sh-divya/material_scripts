@@ -31,8 +31,8 @@ def parse_state(state):
 
 
 def parse_wykoff(wyck, wyck_map):
-    sites = {e[0]: [] for e in wyck}
     if wyck and wyck_map:
+        sites = {e[0]: [] for e in wyck}
         for elem, wp in wyck:
             sites[elem].append(wyck_map[wp]["name"])
     else:
@@ -43,7 +43,7 @@ def parse_wykoff(wyck, wyck_map):
 def sample_candidates(data, num, random):
     data = pd.read_csv(DATA_PATH / data, index_col=0)
     if random:
-        data = data.iloc[: num * 10]
+        # data = data.iloc[: num * 10]
         data = data.sample(n=num, axis=0)
     else:
         data = data.iloc[:num]

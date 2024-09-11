@@ -24,7 +24,11 @@ def get_relaxed_structures(oracle, structs, verbosity):
     rel_str = []
     for s in structs:
         if s is not None:
-            rel_str.append(oracle.relax(s, verbosity))
+            try:
+                rs = oracle.relax(s, verbosity)
+            except:
+                rs = None
+            rel_str.append(rs)
         else:
             rel_str.append(None)
     return rel_str
