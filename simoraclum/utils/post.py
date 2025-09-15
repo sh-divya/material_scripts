@@ -58,8 +58,20 @@ def target_delta(res, strat="min"):
     return df
 
 
-def struct_dist(structs):
-    pass
+def minmaxD(data):
+    data["cif"] = data["cif"].map(lambda x: Structure.from_str(x, fmt="cif"))
+    mind = []
+    maxd = []
+    for s, struct in data["cif"].items():
+        try:
+            dist = struct.distance_matrix
+            mind.append(np.min(dist[np.nonzero(dist)]))
+            maxd.append(np.max(dist[np.nonzero(dist)]))
+        except ValueError:
+            mind.append(0)
+            maxd.append(0)
+    return mind, maxd
+    
 
 
 def single_rmsd(str1, str2):

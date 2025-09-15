@@ -17,15 +17,15 @@ if __name__ == "__main__":
         ]
     nsamples = 100
 
-    best_cols = ["Best", "Mean", "Best RMSD", "Best maxD"]
-    min_cols = ["Choice", "RMSD with min", "maxD with min"]
+    best_cols = ["Best", "Mean", "Best RMSD"] #, "Best maxD"]
+    min_cols = ["Choice", "RMSD with min"] #, "maxD with min"]
 
     for fptr in results_fptr:
         res_path = RESULTS_PATH / fptr
         fname = fptr.split(".")[0].split("_")
         ngen = fname[1][4:]
         iters = fname[2][5:]
-        time_cols = [str(i) for i in range(ngen)]
+        time_cols = [str(i) for i in range(int(ngen))]
 
         err_rmsd_times = pd.read_csv(res_path)
         best_data = err_rmsd_times[best_cols]
@@ -33,14 +33,15 @@ if __name__ == "__main__":
         time_data = err_rmsd_times[time_cols]
 
 
-        fig1, ax1 = plt.subplots()
-        best_data.hist(ax=ax1)
-        fig2, ax2 = plt.subplots()
-        min_data.hist(ax=ax2)
+        # fig1, ax1 = plt.subplots()
+        # best_data.hist(ax=ax1)
+        # fig2, ax2 = plt.subplots()
+        # min_data.hist(ax=ax2)
     
         # fig3, ax3 = plt.subplots()
         # time_data.hist(ax=ax3)
         # fig.savefig(PLOTS_PATH / ("_".join(fname) + "_performance.png"))
+        print(fptr)
         print(best_data.describe())
         print(min_data.describe())
         # print("RMSD nans", samples - err["RMSD"].shape[0])
