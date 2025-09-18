@@ -1,9 +1,11 @@
 data_file: "filter_gfn_samples.csv"
-nsamples: 20
-ngen: 10
+nsamples: 1000
+ngen: 5
 random: False
-rel_iter: 100
+rel_iter: 500
 mlff: "m3gnet"
 target: "Eform"
 verbose: True
-start: 0
+start: 910
+wyckoff: False
+timer: True

@@ -1,19 +1,106 @@
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
+from pymatgen.core import Structure
+from pymatgen.analysis.structure_matcher import StructureMatcher, ElementComparator
 
 
-def target_parity(config, data):
+def target_parity(target, data):
     target_df = pd.DataFrame()
-    target_df[config.target] = data[config.target]
+    target_df[target] = data[target]
     for col in list(data.columns):
         try:
-            if col.split("_")[0] == config.target:
+            if col.split("_")[0] == target:
                 target_df[col] = data[col]
         except IndexError:
             continue
 
     return target_df
+
+
+def parse_times(df):
+    pass
+
+
+def parse_structs(samples, minidx):
+    cols = samples.columns
+    struct_df = pd.DataFrame()
+    tmp = []
+    for c, col in minidx.items():
+        name = "Struct_" + col.split("_")[-1]
+        tmp.append(samples.loc[c, name])
+    struct_df["Best"] = tmp
+    try:
+        struct_df["cif"] = samples["cif"]
+    except IndexError:
+        pass
+    struct_df = struct_df.dropna()
+
+    struct_df = struct_df.map(lambda x: Structure.from_str(x, fmt="cif"))
+    return struct_df
+
+
+def target_delta(res, strat="min"):
+    true = res.iloc[:, 0]
+    pred = res.iloc[:, 1:]
+    if strat == "min":
+        choice = pred.min(axis='columns')
+        ichoice = pred.idxmin(axis=1)
+    elif strat == "med":
+        choice = pred.median(axis=1)
+    delta = abs(pred.sub(true, axis=0))
+    df = pd.DataFrame()
+    df["Best"] = delta.min(axis=1)
+    df["Mean"] = delta.mean(axis=1)
+    df["Choice"] = abs(choice.sub(true))
+    df["iBest"] = delta.idxmin(axis=1)
+    df["iChoice"] = ichoice
+    return df
+
+
+def minmaxD(data):
+    data["cif"] = data["cif"].map(lambda x: Structure.from_str(x, fmt="cif"))
+    mind = []
+    maxd = []
+    for s, struct in data["cif"].items():
+        try:
+            dist = struct.distance_matrix
+            mind.append(np.min(dist[np.nonzero(dist)]))
+            maxd.append(np.max(dist[np.nonzero(dist)]))
+        except ValueError:
+            mind.append(0)
+            maxd.append(0)
+    return mind, maxd
+    
+
+
+def single_rmsd(str1, str2):
+    matcher = StructureMatcher(
+        primitive_cell=False,
+        ltol=4.0,
+        stol=4.0,
+        angle_tol=15,
+        comparator=ElementComparator(),
+    )
+    try:
+        d, maxd = matcher.get_rms_dist(str1, str2)
+    except TypeError:
+        d = None
+        maxd = None
+    return d, maxd
+
+
+def struct_rmsd(structs):
+    rmsd = pd.DataFrame()
+    true = structs["cif"]
+    pred = structs["Best"]
+    d = []
+    for s, struct in pred.items():
+        d.append(single_rmsd(struct, true.iloc[s]))
+    d1, d2 = list(zip(*d))
+    rmsd["RMSD"] = d1
+    rmsd["maxD"] = d2
+    return rmsd
 
 
 def plot_candidates(target, df, name="tmp"):
@@ -39,4 +126,5 @@ def plot_candidates(target, df, name="tmp"):
     fig.supxlabel(f"True {target}")
     fig.supylabel(f"Relaxed {target} predicted with chosen oracle")
     fig.tight_layout()
-    fig.savefig(name)
+    fig.savefig(str(name))
+    return fig

@@ -1,8 +1,11 @@
 data_file: "train_data.csv"
-nsamples: 10
-ngen: 20
-random: False
+nsamples: 1000
+ngen: 5
+random: True
 rel_iter: 500
 mlff: "m3gnet"
 target: "Eform"
 verbose: True
+start: 0
+wyckoff: False
+timer: True

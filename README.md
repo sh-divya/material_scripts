@@ -20,4 +20,10 @@ Repository to use either ML or QM based crystal relaxation oracles. Currently im
 14. `python -m pip install smact`
 15. `python -m pip install mendeleev`
 
+## Usage
+
+For an example training data file "train_data.csv" which should be present in a directory called `data`, the following command should be run
+`python run.py --config-name=train_data`
+It will generate relaxed pyxtal samples and predicted energies in a direcotry called `results`, which should be created before running the command
+
 
