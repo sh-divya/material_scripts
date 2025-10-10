@@ -1,0 +1,6 @@
+ref: mp20
+data_path:
+  samples: /network/projects/crystalgfn/logs/2025-08-14_21-08-36_665166/eval/samples/cifs/
+  test: /network/projects/crystalgfn/data/mp_20/test.csv
+task: cdvae
+num: null

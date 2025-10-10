@@ -4,21 +4,23 @@ Repository to use either ML or QM based crystal relaxation oracles. Currently im
 
 ## Example Setup Solution
 
-1. Conda environment with `python==3.10`
-2. `conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia`
-3. `conda install lightning -c conda-forge`
-4. `conda install pip`
-5. `python -m pip install torch-scatter torch-geometric -f https://data.pyg.org/whl/torch-2.3.0+cu118.html`
-6. `python -m pip install pydantic`
+1. Python venv with `python==3.10`
+2. `pip install torch==2.3.0 torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu118`
+3. `pip install lightning`
+5. `pip install torch-scatter torch-geometric -f https://data.pyg.org/whl/torch-2.3.0+cu118.html`
+6. `pip install pydantic`
 7. `pip install  dgl -f https://data.dgl.ai/wheels/torch-2.3/cu118/repo.html`
-8. `python -m pip install --no-dependencies matgl`
-9. `conda install pandas`
-10. `conda install click`
-11. `conda install --channel conda-forge pymatgen`
-12. `python -m importlib-metadata==1.4`
-13. `python -m pip install --no-dependencies pyxtal`
-14. `python -m pip install smact`
-15. `python -m pip install mendeleev`
+8. `pip install --no-dependencies matgl`
+10. `pip install click`
+11. `pip install hydra-core --upgrade`
+12. `pip install pymatgen`
+13. `pip install ase` 
+14. `pip install boto3`
+15. `pip install torchdata==0.8.0`
+16. `python -m importlib-metadata==1.4`
+17. `python -m pip install --no-dependencies pyxtal`
+18. `python -m pip install smact`
+19. `python -m pip install mendeleev`
 
 ## Usage
 

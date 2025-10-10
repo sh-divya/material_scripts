@@ -1,0 +1,18 @@
+name: megnet_old_gfn
+
+data:
+  src: "filter_gfn_samples.csv"
+  nsamples: 1000
+  random: False
+  target: "Eform"
+  start: 910
+
+relax:
+  mlff: "m3gnet"
+  rel_iter: 500
+  verbose: True
+
+pyxtal:
+  ngen: 5
+  wyckoff: False
+  timer: True

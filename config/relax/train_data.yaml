@@ -1,0 +1,16 @@
+data:
+  src: "train_data.csv"
+  nsamples: 1000
+  random: True
+  target: "Eform"
+  start: 0
+
+relax:
+  mlff: "m3gnet"
+  verbose: True
+  rel_iter: 500
+
+pyxtal:
+  ngen: 5
+  wyckoff: False
+  timer: True

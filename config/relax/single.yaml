@@ -1,0 +1,17 @@
+name: mace_fix
+
+data:
+  # src: "mp20names_100.txt"
+  src: /network/projects/crystalgfn/logs/2025-08-14_21-08-36_665166/eval/samples/cifs
+  target: "Eform"
+  start: 0
+  nsamples: 1000
+  # nsamples: 10
+
+
+relax:
+  rel_iter: 100
+  mlff: "mace"
+  verbose: True
+
+pyxtal: null

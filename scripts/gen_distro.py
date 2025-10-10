@@ -1,7 +1,7 @@
 import pandas as pd
 from pathlib import Path
-from simoraclum.utils.io import get_saved_results
-from simoraclum.utils.post import minmaxD
+from src.utils.io import get_saved_results
+from src.utils.post import minmaxD
 from matplotlib import pyplot as plt
 import click
 import numpy as np

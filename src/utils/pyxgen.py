@@ -1,19 +1,51 @@
-import numpy as np
-import pandas as pd
-from pathlib import Path
+import errno
+import os
+import signal
+import functools
+import time
+
 import pyxtal as pyx
 from pyxtal import pyxtal
 from pyxtal.lattice import Lattice
 from pymatgen.core import Composition
-from simoraclum.utils.misc import timeout
 
-ROOT_PATH = Path(__file__).parent.parent.parent
-DATA_PATH = ROOT_PATH / "data"
+
+# adapted from https://stackoverflow.com/questions/2281850/timeout-function-if-it-takes-too-long-to-finish
+def timeout(seconds=10, error_message=os.strerror(errno.ETIME)):
+    def decorator(func):
+        def _handle_timeout(signum, frame):
+            raise TimeoutError
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            signal.signal(signal.SIGALRM, _handle_timeout)
+            signal.alarm(seconds)
+            delta = seconds
+            try:
+                t1 = time.time()
+                results = func(*args, **kwargs)
+                t2 = time.time()
+                delta = t2 - t1
+            except KeyError:
+                pass
+            finally:
+                signal.alarm(0)
+
+            return results, delta
+
+        return wrapper
+
+    return decorator
 
 
 def parse_state(state):
     print("Parsing")
-    comp = Composition(state["Composition"]).get_el_amt_dict()
+    try:
+        comp = Composition(state["Composition"])
+    except KeyError:
+        comp = Composition(state["Formulae"])
+
+    comp = comp.get_el_amt_dict()
     sg = int(state["SG"])
     try:
         wyck = []
@@ -29,7 +61,6 @@ def parse_state(state):
     lattice = Lattice.from_para(*lattice[:3], *lattice[3:])
     return comp, sg, lattice, wyck
 
-
 def parse_wykoff(wyck, wyck_map):
     if wyck and wyck_map:
         sites = {e[0]: [] for e in wyck}
@@ -38,17 +69,6 @@ def parse_wykoff(wyck, wyck_map):
     else:
         sites = None
     return sites
-
-
-def sample_candidates(data, num, random):
-    data = pd.read_csv(DATA_PATH / data, index_col=0)
-    if random:
-        # data = data.iloc[: num * 10]
-        data = data.sample(n=num, axis=0)
-    else:
-        data = data.iloc[:num]
-    return data
-
 
 @timeout(180)
 def sample_pyx(sg, elems, stoich, lattice, sites=None):
@@ -97,56 +117,3 @@ def struct_generator(state, ng, wyckoff_map):
         structs.append(sample)
         times.append(deltaT)
     return structs, times
-
-
-def save_results(config, data, pred_str, pred_targ, times, fptr):
-    fpath = ROOT_PATH / "results"
-    fpath.mkdir(parents=True, exist_ok=True)
-    pred_str = pred_str.T
-    pred_targ = pred_targ.T
-    times = times.T
-    for i, (s, t, delta) in enumerate(zip(pred_str, pred_targ, times)):
-        targ_col = f"{config.target}_rel{i}"
-        str_col = f"Struct_rel{i}"
-        data[str_col] = s
-        data[targ_col] = t
-        if config.timer:
-            time_col = f"time_gen{i}"
-            data[time_col] = delta
-    data.to_csv(fpath / fptr)
-    return data
-
-
-def get_saved_results(fptr, target, ngen, num):
-    res_path = ROOT_PATH / "results" / fptr
-    if res_path.is_file():
-        samples = pd.read_csv(res_path, index_col=0)
-        all_cols = samples.columns[9:]
-        struct_cols = []
-        targ_cols = []
-        time_cols = []
-        for col in all_cols:
-            try:
-                pre, num = str(col).split("_")
-                if pre == "Struct":
-                    struct_cols.append(str(col))
-                elif pre == target:
-                    targ_cols.append(str(col))
-                elif pre == "time":
-                    time_cols.append(str(col))
-            except ValueError:
-                continue
-        rel_structs = samples[struct_cols].values.astype("object")
-        rel_targets = samples[targ_cols].values
-        gen_times = samples[time_cols].values
-    else:
-        rel_structs = np.array(
-            [[f"{i}{j}_str" for j in range(ngen)] for i in range(num)], dtype="object"
-        )
-        rel_targets = np.array(
-            [[f"{j}{i}_targ" for j in range(ngen)] for i in range(num)]
-        )
-        gen_times = np.array(
-            [[0 for j in range(ngen)] for i in range(num)], dtype="object"
-        )
-    return rel_structs, rel_targets, gen_times
