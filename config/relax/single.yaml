@@ -2,7 +2,8 @@ name: mace_fix
 
 data:
   # src: "mp20names_100.txt"
-  src: /network/projects/crystalgfn/logs/2025-08-14_21-08-36_665166/eval/samples/cifs
+  # src: /network/projects/crystalgfn/logs/2025-08-14_21-08-36_665166/eval/samples/cifs
+  src: /network/projects/crystalgfn/logs/2025-10-30_17-15-04_473526_8037678/eval/samples/cifs
   target: "Eform"
   start: 0
   nsamples: 1000

@@ -26,7 +26,7 @@ class MLOracle(object):
         self.model_name = model
         self.target = target
 
-        opt_args = {"max_steps": iters}
+        opt_args = {"max_steps": iters, "cell_only": "Frechet"}
         if self.model_name == "m3gnet":
             matgl.clear_cache(confirm=False)
             if self.target == "Eform":
@@ -130,7 +130,7 @@ class MACEPredict:
                     sample = FrechetCellFilter(sample)
                 else:
                     raise ValueError(
-                        f"{ase_cellfilter} nor available as constraint for relaxation"
+                        f"{ase_cellfilter} not available as constraint for relaxation"
                     )
                 opt = FIRE(sample, logfile="-")
                 opt.run(fmax=fmax, steps=steps)
